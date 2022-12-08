@@ -9,8 +9,8 @@ enum Play {
     S,
 }
 
-#[derive(Debug, Copy, Clone)]
-struct ParsePlayError;
+#[derive(Debug)]
+struct ParsePlayError(String);
 
 impl FromStr for Play {
     type Err = ParsePlayError;
@@ -23,20 +23,20 @@ impl FromStr for Play {
             "A" => Ok(Play::R),
             "B" => Ok(Play::P),
             "C" => Ok(Play::S),
-            _ => Err(ParsePlayError),
+            _ => Err(ParsePlayError(s.to_owned())),
         }
     }
 }
 
 #[derive(Debug, Copy, Clone)]
 enum GameResult {
-    Win = 6,
-    Lose = 0,
-    Tie = 3,
+    Win,
+    Lose,
+    Tie,
 }
 
-#[derive(Debug, Copy, Clone)]
-struct ParseGameResultError;
+#[derive(Debug)]
+struct ParseGameResultError(String);
 
 impl FromStr for GameResult {
     type Err = ParseGameResultError;
@@ -46,7 +46,7 @@ impl FromStr for GameResult {
             "X" => Ok(GameResult::Lose),
             "Y" => Ok(GameResult::Tie),
             "Z" => Ok(GameResult::Win),
-            _ => Err(ParseGameResultError),
+            _ => Err(ParseGameResultError(s.to_owned())),
         }
     }
 }
@@ -57,7 +57,7 @@ enum Either {
 }
 
 #[derive(Debug)]
-struct EitherParseError;
+struct EitherParseError(String);
 impl FromStr for Either {
     type Err = EitherParseError;
 
@@ -65,7 +65,7 @@ impl FromStr for Either {
         match s {
             "X" | "Y" | "Z" => Ok(Either::GameResult(s.parse().unwrap())),
             "A" | "B" | "C" => Ok(Either::Play(s.parse().unwrap())),
-            _ => Err(EitherParseError),
+            _ => Err(EitherParseError(s.to_owned())),
         }
     }
 }
