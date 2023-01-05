@@ -3,11 +3,44 @@ use chumsky::primitive::*;
 use std::fs;
 
 pub fn process_part1(input: &str) -> String {
-    "works".to_string()
+    let crane_problem = file_parser().parse(input).unwrap();
+    let mut stacks: Vec<Stack> = crane_problem.memory;
+    let instructions: Vec<Instruction> = crane_problem.instructions;
+    for instruction in instructions {
+        for _ in 0..instruction.count {
+            let temp: char = stacks[(instruction.source - 1) as usize].pop().unwrap();
+            stacks[(instruction.destination - 1) as usize].push(temp);
+        }
+    }
+    let mut tops: String = String::new();
+    for stack in stacks {
+        tops.push_str(stack.last().unwrap().to_string().as_str());
+    }
+    tops
 }
 
 pub fn process_part2(input: &str) -> String {
-    "works".to_string()
+    let crane_problem = file_parser().parse(input).unwrap();
+    let mut stacks: Vec<Stack> = crane_problem.memory;
+    let instructions: Vec<Instruction> = crane_problem.instructions;
+    for instruction in instructions {
+        let mut temp_vec: Vec<char> = vec![];
+        for _ in 0..instruction.count {
+            let temp: char = stacks[(instruction.source - 1) as usize].pop().unwrap();
+            temp_vec.push(temp);
+        }
+
+        if instruction.count > 1 {
+            temp_vec.reverse();
+        }
+
+        stacks[(instruction.destination - 1) as usize].append(&mut temp_vec);
+    }
+    let mut tops: String = String::new();
+    for stack in stacks {
+        tops.push_str(stack.last().unwrap().to_string().as_str());
+    }
+    tops
 }
 
 type Stack = Vec<char>;
@@ -171,12 +204,12 @@ mod tests {
     #[test]
     fn test_part1() {
         let input = fs::read_to_string("test.txt").expect("Cannot read file");
-        assert_eq!(process_part1(&input), "works");
+        assert_eq!(process_part1(&input), "CMZ");
     }
 
     #[test]
     fn test_part2() {
         let input = fs::read_to_string("test.txt").expect("Cannot read file");
-        assert_eq!(process_part2(&input), "works");
+        assert_eq!(process_part2(&input), "MCD");
     }
 }
